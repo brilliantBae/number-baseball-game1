@@ -17,7 +17,7 @@
               <tbody>
               {{#users}}
                 <tr>
-                    <th scope="row"></th> <td> <a href="/user/{{id}}">{{userId}}</a></td> <td>{{name}}</td> <td>{{email}}</td><td><a href="/user/{{id}}/form" class="btn btn-success" role="button">수정</a></td>
+                    <th scope="row"></th> <td> <a href="/users/{{id}}">{{userId}}</a></td> <td>{{name}}</td> <td>{{email}}</td><td><a href="/user/{{id}}/form" class="btn btn-success" role="button">수정</a></td>
                 </tr>
               {{/users}}
               </tbody>
@@ -27,6 +27,6 @@
 </div>
 
 <!-- script references -->
-{{> /include/reference}}
+{{> /include/footer}}
 </body>
 </html>
