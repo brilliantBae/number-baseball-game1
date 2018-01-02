@@ -39,7 +39,7 @@ public class QuestionController {
 			return "/users/loginForm";
 		}
 		User loginUser = HttpSessionUtils.getUserFromSession(session);
-		Question question = new Question(loginUser.getUserId(), title, contents);
+		Question question = new Question(loginUser, title, contents);
 		questionRepository.save(question);
 		return "redirect:/";
 	}
@@ -59,7 +59,7 @@ public class QuestionController {
 		}
 		User loginedUser = HttpSessionUtils.getUserFromSession(session);
 		Question question = questionRepository.findOne(id);
-		if(!question.isSameWriter(loginedUser.getUserId())) {
+		if(!question.isSameWriter(loginedUser)) {
 			logger.debug("Not same user");
 			throw new IllegalStateException("You can not modify other users' question!");
 		}
@@ -74,7 +74,7 @@ public class QuestionController {
 		}
 		User loginedUser = HttpSessionUtils.getUserFromSession(session);
 		Question question = questionRepository.findOne(id);
-		if(!question.isSameWriter(loginedUser.getUserId())) {
+		if(!question.isSameWriter(loginedUser)) {
 			throw new IllegalStateException("You can not modify other users' question!");
 		}
 		question.update(title, contents);
@@ -88,7 +88,7 @@ public class QuestionController {
 		}
 		User loginedUser = HttpSessionUtils.getUserFromSession(session);
 		Question question = questionRepository.findOne(id);
-		if(!question.isSameWriter(loginedUser.getUserId())) {
+		if(!question.isSameWriter(loginedUser)) {
 			return "/users/loginForm";
 		}
 		questionRepository.delete(question);
