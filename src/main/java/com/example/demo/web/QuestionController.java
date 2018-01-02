@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -80,8 +81,17 @@ public class QuestionController {
 		questionRepository.save(question);
 		return "redirect:/";
 	}
-//	@PostMapping("{id}/remove")
-//	public String remove() {
-//		return "redirect:/";
-//	}
+	@DeleteMapping("{id}/remove")
+	public String remove(@PathVariable Long id, HttpSession session) {
+		if(!HttpSessionUtils.isLoginUser(session)) {// 미로그인 시.
+			return "/users/loginForm";
+		}
+		User loginedUser = HttpSessionUtils.getUserFromSession(session);
+		Question question = questionRepository.findOne(id);
+		if(!question.isSameWriter(loginedUser.getUserId())) {
+			return "/users/loginForm";
+		}
+		questionRepository.delete(question);
+		return "redirect:/";
+	}
 }
