@@ -37,5 +37,16 @@ public class Question {
 	public String getContents() {
 		return contents;
 	}
+	public boolean isSameWriter(String newWriter) {
+		if(this.writer.equals(newWriter)) {
+			return true;
+		}
+		return false;
+	}
+
+	public void update(String newTitle, String newContents) {
+		this.title = newTitle;
+		this.contents = newContents; 
+	}
 	
 }
