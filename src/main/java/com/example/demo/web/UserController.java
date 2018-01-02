@@ -36,12 +36,17 @@ public class UserController {
 			logger.debug("아이디 일치하지 않음");
 			return "redirect:/users/loginForm";
 		}
-		if(!password.equals(user.getPassword())) {
+		if(!user.matchPassword(password)) {
 			logger.debug("password 일치하지 않음");
 			return "redirect:/users/loginForm";
 		}
-		session.setAttribute("user", user);
+		session.setAttribute("sessionedUser", user);
 		
+		return "redirect:/";
+	}
+	@GetMapping("/logout")
+	public String logout(HttpSession session) {
+		session.removeAttribute("sessionedUser");
 		return "redirect:/";
 	}
 	@GetMapping("/signUp")
@@ -64,7 +69,7 @@ public class UserController {
 	@GetMapping("/{id}")
 	public String showProfile(@PathVariable Long id, Model model) {
 		for(User user : userRepository.findAll()) {
-			if(user.getId().equals(id)) {
+			if(user.matchId(id)) {
 				model.addAttribute("user", userRepository.findOne(id));
 			}
 		}
@@ -72,14 +77,28 @@ public class UserController {
 	}
 	
 	@GetMapping("/{id}/form")
-	public String updateForm(@PathVariable Long id, Model model) {
+	public String updateForm(@PathVariable Long id, Model model, HttpSession session) {
+		if(!HttpSessionUtils.isLoginUser(session)) {
+			return "redirect:/users/loginForm";
+		}
+		User sessionedUser = HttpSessionUtils.getUserFromSession(session);
+		if(!sessionedUser.matchId(id)) {
+			throw new IllegalStateException("You can only modify your own info.");
+		}
 		model.addAttribute("user", userRepository.findOne(id));
 		return "user/updateForm";
 	}
 	@PutMapping("/{id}")
-	public String modify(@PathVariable Long id, Model model, User newUser) {
+	public String modify(@PathVariable Long id, Model model, User updatedUser, HttpSession session) {
+		if(!HttpSessionUtils.isLoginUser(session)) {
+			return "redirect:/users/loginForm";
+		}
+		User sessionedUser = HttpSessionUtils.getUserFromSession(session);
+		if(!sessionedUser.matchId(id)) {
+			throw new IllegalStateException("You can only modify your own info.");
+		}
 		User user = userRepository.findOne(id);
-		user.update(newUser);
+		user.update(updatedUser);
 		userRepository.save(user);
 		model.addAttribute("user", user);
 		return "redirect:/users";
