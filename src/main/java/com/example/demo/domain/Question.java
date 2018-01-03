@@ -1,5 +1,8 @@
 package com.example.demo.domain;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
@@ -18,6 +21,7 @@ public class Question {
 	private User writer;
 	private String title;
 	private String contents;
+	private LocalDateTime createDate;
 	
 	public Question() {}
 	
@@ -26,6 +30,14 @@ public class Question {
 		this.writer = writer;
 		this.title = title;
 		this.contents = contents;
+		this.createDate = LocalDateTime.now();
+	}
+	
+	public String getFormattedCreateDate() {
+		if(createDate == null) {
+			return "";
+		}
+		return createDate.format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss"));
 	}
 	public Long getId() {
 		return id;
